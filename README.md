@@ -423,17 +423,16 @@ Setiap Fungsi pembantu melakukan satu tugas tertentu, tanpa ketergantungan pada 
 Pembantu URL selalu dimuat sehingga Anda tidak perlu memuatnya sendiri.
 3. Loading a Helpers
 Memuat file pembantu cukup sederhana menggunakan metode berikut:
+
 ```shell
 <?php
-
 helper('name');
 ```
 Kode di atas memuat file name_helper.php.
 catatan :
-   a. untuk memuat file helper Cookie, yang diberi nama cookie_helper.php, Anda akan                 melakukan ini:
+   a. untuk memuat file helper Cookie, yang diberi nama cookie_helper.php, kita akan melakukan ini:
       ```shell
       <?php
-
       helper('cookie');
       ```
 3. Paket Auto-Discovery dan Composer
@@ -447,24 +446,24 @@ Urutan beban adalah sebagai berikut:
    3. system/Helpers - File dasar dimuat terakhir.
 5. Memuat Banyak Pembantu
 Jika Anda perlu memuat lebih dari satu helper sekaligus, Anda dapat lulus Array nama file di dan semuanya akan dimuat:
+
 ```shell
 <?php
-
 helper(['cookie', 'date']);
 ```
 6. Memuat dalam pengontrol
 Namun jika Anda ingin memuat di konstruktor pengontrol Anda, Anda dapat menggunakan properti di Controller sebagai gantinya. Lihat Controllers.$helpers
 7. Loading from Specified Namespace
 Di dalam pengontrol kami, kami dapat Gunakan perintah berikut untuk memuat helper untuk kami:Example\Blog
+
 ```shell
 <?php
-
 helper('Example\Blog\blog');
 ```
 atau :
+
 ```shell
 <?php
-
 helper('Example\Blog\Helpers\blog');
 ```
 8. Pembantu Pemuatan Otomatis
@@ -481,11 +480,9 @@ Misalnya, untuk membuat tautan menggunakan fungsi di salah satu file tampilan An
       Misalnya, untuk membuat info helper, Anda akan membuat file bernama   
       app/Helpers/info_helper.php, dan menambahkan fungsi ke file:
       ``` shell
-               <?php
-         
+         <?php
          // app/Helpers/info_helper.php
          use CodeIgniter\CodeIgniter;
-         
          /**
           * Returns CodeIgniter's version.
           */
@@ -495,8 +492,9 @@ Misalnya, untuk membuat tautan menggunakan fungsi di salah satu file tampilan An
          }
       ```
    b. Pembantu "Memperpanjang"
-      Untuk "memperluas" Pembantu, buat file di folder aplikasi/Pembantu Anda dengan nama yang       identik dengan Helper yang ada.
-      Misalnya, untuk memperluas Array Helper asli, Anda akan membuat file bernama                   app/Helpers/array_helper.php, dan tambahkan atau ganti Fungsi:
+      Untuk "memperluas" Pembantu, buat file di folder aplikasi/Pembantu Anda dengan nama yang identik dengan Helper yang ada.
+      Misalnya, untuk memperluas Array Helper asli, Anda akan membuat file bernama app/Helpers/array_helper.php, dan tambahkan atau ganti Fungsi:
+      
       ```shell
           <?php
          
@@ -606,9 +604,11 @@ class StoreController extends BaseController
         // ...
     }
 }
+```
 9. Protecting Methods
 Secara internal, ini menggunakan instance controller untuk mendapatkan data yang akan divalidasi.$this->request
 Dokumen Perpustakaan Validasi memiliki detail tentang Format aturan dan array pesan, serta aturan yang tersedia:
+
 ```shell
 <?php
 
@@ -689,7 +689,7 @@ example.com/index.php/helloworld/
 ### Views
 1. Membuat Tampilan
   Buat file dengan nama blog_view.php di app\Views
-  shell
+  ```shell
   <html>
       <head>
           <title>My Blog</title>
@@ -698,10 +698,10 @@ example.com/index.php/helloworld/
           <h1>Welcome to my Blog!</h1>
       </body>
   </html>
-  
+  ```
 2. Menampilkan Tampilan
   Sekarang, buat file bernama Blog.php di direktori app/Controllers , dan letakkan ini di dalamnya:
-  shell
+  ```shell
     <?php
     
     namespace App\Controllers;
@@ -713,14 +713,14 @@ example.com/index.php/helloworld/
             return view('blog_view');
         }
     }
-  
+  ```
 Buka file perutean yang terletak di app/Config/Routes.php :
-shell
+```shell
 use App\Controllers\Blog;
 $routes->get('blog', [Blog::class, 'index']);
-
+```
 3. memuat banyak tampilan
-   shell
+ ```shell
     <?php
     
     namespace App\Controllers;
@@ -741,10 +741,10 @@ $routes->get('blog', [Blog::class, 'index']);
                 . view('footer');
         }
     }
-    
+   ``` 
 4. Menambahkan Data Dinamis ke Tampilan
   Data diteruskan dari pengontrol ke tampilan melalui array di parameter kedua fungsi view(). Berikut ini contohnya:
-  shell
+  ```shell
   <?php
 
   namespace App\Controllers;
@@ -759,9 +759,9 @@ $routes->get('blog', [Blog::class, 'index']);
           return view('blog_view', $data);
       }
   }
-  
+  ```
   Sekarang buka file view dan ubah teks menjadi variabel yang sesuai dengan kunci array di data Anda:
-  shell
+ ```shell
   <html>
       <head>
           <title><?= esc($title) ?></title>
@@ -770,19 +770,19 @@ $routes->get('blog', [Blog::class, 'index']);
           <h1><?= esc($heading) ?></h1>
       </body>
   </html>
-  
+  ```
 5. Opsi Simpan Data
-  shell
+ ```shell
     $data = [
       'title'   => 'My title',
       'heading' => 'My Heading',
       'message' => 'My Message',
     ];
     return view('blog_view', $data, ['saveData' => false]);
-  
+  ```
 6. Membuat Loop
    Berikut ini contoh sederhananya. Tambahkan ini ke pengontrol Anda:
-  shell
+  ```shell
   <?php
   
   namespace App\Controllers;
@@ -800,9 +800,9 @@ $routes->get('blog', [Blog::class, 'index']);
           return view('blog_view', $data);
       }
   }
-  
+ ``` 
 Sekarang buka file view Anda dan buat lingkaran:
-shell
+```shell
 <html>
 <head>
     <title><?= esc($title) ?></title>
