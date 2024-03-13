@@ -354,6 +354,7 @@ Buat app/Views/news/index.php dan tambahkan potongan kode berikutnya.
 
 <?php endif ?>
 ```
+
 9. Berita Lengkap::show() Metode
 Tambahkan beberapa kode ke controller dan buat view baru. Kembali ke controller dan perbarui methode dengan yang berikut:News show()
 ```shell
