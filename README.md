@@ -411,8 +411,413 @@ Dengan konsep MVC ini, website seakan memiliki bagian yang terpisah dan bisa dik
   b. Model, Model biasanya disimpan dalam app/Models.
   c. Controller, Controller biasanya disimpan dalam app/Controllers.
 
+
 ## General Topics
 ### Helper Functions
-1. Apa itu 
+1. Apa itu Helpers?
+Helper adalah file pembantu yang mirip dengan controller pada codeigiter. Jika pada controller kamu diharuskan menuliskan syntax dengan kaidah penulisan OOP (Object Oriented Programming), maka berbeda dengan Helper yang tidak harus dituliskan dengan kaidah tersebut.  
+Setiap Fungsi pembantu melakukan satu tugas tertentu, tanpa ketergantungan pada yang lain Fungsi. Bisanya disimpan di direktori system/Helpers, atau app/Helpers.
+2. Loading Helpers
+Pembantu URL selalu dimuat sehingga Anda tidak perlu memuatnya sendiri.
+3. Loading a Helpers
+Memuat file pembantu cukup sederhana menggunakan metode berikut:
+```shell
+<?php
 
+helper('name');
+```
+Kode di atas memuat file name_helper.php.
+catatan :
+   a. untuk memuat file helper Cookie, yang diberi nama cookie_helper.php, Anda akan                 melakukan ini:
+      ```shell
+      <?php
 
+      helper('cookie');
+      ```
+3. Paket Auto-Discovery dan Composer
+Secara default, CodeIgniter akan mencari file helper di semua namespace yang ditentukan oleh Auto-Discovery. Anda dapat memeriksa namespace layanan yang ditentukan dengan perintah spark.
+Jika Anda menggunakan banyak paket Composer, Anda akan memiliki banyak namespace yang ditentukan. CodeIgniter akan memindai semua namespace secara default.
+4. Muat Pesanan
+Fungsi ini akan memindai melalui semua namespace yang ditentukan dan memuat SEMUA pembantu yang cocok dengan nama yang sama. Ini memungkinkan pembantu modul apa pun untuk dimuat, serta pembantu apa pun yang Anda buat khusus untuk aplikasi ini.
+Urutan beban adalah sebagai berikut:
+   1. app/Helpers - File yang dimuat di sini selalu dimuat terlebih dahulu.
+   2. {namespace}/Pembantu - Semua namespace dilingkarkan sesuai urutan yang ditentukan.
+   3. system/Helpers - File dasar dimuat terakhir.
+5. Memuat Banyak Pembantu
+Jika Anda perlu memuat lebih dari satu helper sekaligus, Anda dapat lulus Array nama file di dan semuanya akan dimuat:
+```shell
+<?php
+
+helper(['cookie', 'date']);
+```
+6. Memuat dalam pengontrol
+Namun jika Anda ingin memuat di konstruktor pengontrol Anda, Anda dapat menggunakan properti di Controller sebagai gantinya. Lihat Controllers.$helpers
+7. Loading from Specified Namespace
+Di dalam pengontrol kami, kami dapat Gunakan perintah berikut untuk memuat helper untuk kami:Example\Blog
+```shell
+<?php
+
+helper('Example\Blog\blog');
+```
+atau :
+```shell
+<?php
+
+helper('Example\Blog\Helpers\blog');
+```
+8. Pembantu Pemuatan Otomatis
+Ini dilakukan dengan membuka file app/Config/Autoload.php dan menambahkan pembantu ke properti.$helpers
+9. Menggunakan Pembantu
+Misalnya, untuk membuat tautan menggunakan fungsi di salah satu file tampilan Anda, Anda akan melakukan ini:
+```shell
+<div>
+<?= anchor('blog/comments', 'Click Here') ?>
+</div>
+```
+10. Membuat Pembantu
+   a. Membuat Pembantu Khusus
+      Misalnya, untuk membuat info helper, Anda akan membuat file bernama   
+      app/Helpers/info_helper.php, dan menambahkan fungsi ke file:
+      ``` shell
+               <?php
+         
+         // app/Helpers/info_helper.php
+         use CodeIgniter\CodeIgniter;
+         
+         /**
+          * Returns CodeIgniter's version.
+          */
+         function ci_version(): string
+         {
+             return CodeIgniter::CI_VERSION;
+         }
+      ```
+   b. Pembantu "Memperpanjang"
+      Untuk "memperluas" Pembantu, buat file di folder aplikasi/Pembantu Anda dengan nama yang       identik dengan Helper yang ada.
+      Misalnya, untuk memperluas Array Helper asli, Anda akan membuat file bernama                   app/Helpers/array_helper.php, dan tambahkan atau ganti Fungsi:
+      ```shell
+          <?php
+         
+         // any_in_array() is not in the Array Helper, so it defines a new function
+         function any_in_array($needle, $haystack)
+         {
+             $needle = is_array($needle) ? $needle : [$needle];
+         
+             foreach ($needle as $item) {
+                 if (in_array($item, $haystack, true)) {
+                     return true;
+                 }
+             }
+         
+             return false;
+         }
+         
+         // random_element() is included in Array Helper, so it overrides the native function
+         function random_element($array)
+         {
+             shuffle($array);
+         
+             return array_pop($array);
+         }
+      ```
+## Controllers and Routing
+### Controllers
+Controller hanyalah file kelas yang menangani permintaan HTTP. Perutean URI mengaitkan URI dengan pengontrol. Ini mengembalikan Lihat string atau objek.
+1. Constructor
+```shell
+<?php
+
+namespace App\Controllers;
+
+use CodeIgniter\HTTP\RequestInterface;
+use CodeIgniter\HTTP\ResponseInterface;
+use Psr\Log\LoggerInterface;
+
+class Product extends BaseController
+{
+    public function initController(
+        RequestInterface $request,
+        ResponseInterface $response,
+        LoggerInterface $logger
+    ) {
+        parent::initController($request, $response, $logger);
+
+        // Add your code here.
+    }
+
+    // ...
+}
+```
+2. Included Properties
+Controller CodeIgniter menyediakan properti ini.
+3. Request Object
+Instans Permintaan utama aplikasi selalu tersedia sebagai properti kelas, .$this->request
+4. Response Object
+Instans Respons utama aplikasi selalu tersedia sebagai properti kelas, .$this->response
+5. Logger Object
+Instance kelas Logger tersedia sebagai properti kelas, .$this->logger
+6. Helpers
+```shell
+<?php
+namespace App\Controllers;
+class MyController extends BaseController
+{
+    protected $helpers = ['url', 'form'];
+}
+```
+7. forceHTTPS
+Metode kenyamanan untuk memaksa metode diakses melalui HTTPS tersedia dalam semua Controller:
+```shell
+<?php
+
+if (! $this->request->isSecure()) {
+    $this->forceHTTPS();
+}
+```
+8. Validating Data
+Untuk mempermudah pengecekan data, controller juga menyediakan metode kenyamanan.validateData()
+```shell
+<?php
+
+namespace App\Controllers;
+
+class StoreController extends BaseController
+{
+    public function product(int $id)
+    {
+        $data = [
+            'id'   => $id,
+            'name' => $this->request->getPost('name'),
+        ];
+
+        $rule = [
+            'id'   => 'integer',
+            'name' => 'required|max_length[255]',
+        ];
+
+        if (! $this->validateData($data, $rule)) {
+            return view('store/product', [
+                'errors' => $this->validator->getErrors(),
+            ]);
+        }
+
+        // ...
+    }
+}
+9. Protecting Methods
+Secara internal, ini menggunakan instance controller untuk mendapatkan data yang akan divalidasi.$this->request
+Dokumen Perpustakaan Validasi memiliki detail tentang Format aturan dan array pesan, serta aturan yang tersedia:
+```shell
+<?php
+
+namespace App\Controllers;
+
+class UserController extends BaseController
+{
+    public function updateUser(int $userID)
+    {
+        if (! $this->validate([
+            'email' => "required|is_unique[users.email,id,{$userID}]",
+            'name'  => 'required|alpha_numeric_spaces',
+        ])) {
+            // The validation failed.
+            return view('users/update', [
+                'errors' => $this->validator->getErrors(),
+            ]);
+        }
+
+        // The validation was successful.
+
+        // Get the validated data.
+        $validData = $this->validator->getValidated();
+
+        // ...
+    }
+}
+```
+Jika Anda merasa lebih mudah untuk menyimpan aturan dalam file konfigurasi, Anda dapat mengganti array dengan nama grup seperti yang didefinisikan dalam app/Config/Validation.php:$rules
+```shell
+<?php
+
+namespace App\Controllers;
+
+class UserController extends BaseController
+{
+    public function updateUser(int $userID)
+    {
+        if (! $this->validate('userRules')) {
+            // The validation failed.
+            return view('users/update', [
+                'errors' => $this->validator->getErrors(),
+            ]);
+        }
+
+        // The validation was successful.
+
+        // Get the validated data.
+        $validData = $this->validator->getValidated();
+
+        // ...
+    }
+}
+```
+10.Metode Proteksi
+jika Anda mendefinisikan metode seperti ini untuk pengontrol:Helloworld
+```shell
+<?php
+
+namespace App\Controllers;
+
+class Helloworld extends BaseController
+{
+    protected function utility()
+    {
+        // some code
+    }
+}
+```
+11.Auto Routing (Improved)
+Bagian ini menjelaskan fungsionalitas perutean otomatis baru. Secara otomatis merutekan permintaan HTTP, dan menjalankan metode pengontrol yang sesuai tanpa definisi rute.
+Sejak v4.2.0, perutean otomatis dinonaktifkan secara default. Untuk menggunakannya, lihat Mengaktifkan Perutean Otomatis.
+Pertimbangkan URI ini:
+```shell
+example.com/index.php/helloworld/
+```
+## Building Response
+### Views
+1. Membuat Tampilan
+  Buat file dengan nama blog_view.php di app\Views
+  shell
+  <html>
+      <head>
+          <title>My Blog</title>
+      </head>
+      <body>
+          <h1>Welcome to my Blog!</h1>
+      </body>
+  </html>
+  
+2. Menampilkan Tampilan
+  Sekarang, buat file bernama Blog.php di direktori app/Controllers , dan letakkan ini di dalamnya:
+  shell
+    <?php
+    
+    namespace App\Controllers;
+    
+    class Blog extends BaseController
+    {
+        public function index()
+        {
+            return view('blog_view');
+        }
+    }
+  
+Buka file perutean yang terletak di app/Config/Routes.php :
+shell
+use App\Controllers\Blog;
+$routes->get('blog', [Blog::class, 'index']);
+
+3. memuat banyak tampilan
+   shell
+    <?php
+    
+    namespace App\Controllers;
+    
+    use CodeIgniter\Controller;
+    
+    class Page extends Controller
+    {
+        public function index()
+        {
+            $data = [
+                'page_title' => 'Your title',
+            ];
+    
+            return view('header')
+                . view('menu')
+                . view('content', $data)
+                . view('footer');
+        }
+    }
+    
+4. Menambahkan Data Dinamis ke Tampilan
+  Data diteruskan dari pengontrol ke tampilan melalui array di parameter kedua fungsi view(). Berikut ini contohnya:
+  shell
+  <?php
+
+  namespace App\Controllers;
+  
+  class Blog extends BaseController
+  {
+      public function index()
+      {
+          $data['title']   = 'My Real Title';
+          $data['heading'] = 'My Real Heading';
+  
+          return view('blog_view', $data);
+      }
+  }
+  
+  Sekarang buka file view dan ubah teks menjadi variabel yang sesuai dengan kunci array di data Anda:
+  shell
+  <html>
+      <head>
+          <title><?= esc($title) ?></title>
+      </head>
+      <body>
+          <h1><?= esc($heading) ?></h1>
+      </body>
+  </html>
+  
+5. Opsi Simpan Data
+  shell
+    $data = [
+      'title'   => 'My title',
+      'heading' => 'My Heading',
+      'message' => 'My Message',
+    ];
+    return view('blog_view', $data, ['saveData' => false]);
+  
+6. Membuat Loop
+   Berikut ini contoh sederhananya. Tambahkan ini ke pengontrol Anda:
+  shell
+  <?php
+  
+  namespace App\Controllers;
+  
+  class Blog extends BaseController
+  {
+      public function index()
+      {
+          $data = [
+              'todo_list' => ['Clean House', 'Call Mom', 'Run Errands'],
+              'title'     => 'My Real Title',
+              'heading'   => 'My Real Heading',
+          ];
+  
+          return view('blog_view', $data);
+      }
+  }
+  
+Sekarang buka file view Anda dan buat lingkaran:
+shell
+<html>
+<head>
+    <title><?= esc($title) ?></title>
+</head>
+<body>
+    <h1><?= esc($heading) ?></h1>
+
+    <h2>My Todo List</h2>
+
+    <ul>
+    <?php foreach ($todo_list as $item): ?>
+
+        <li><?= esc($item) ?></li>
+
+    <?php endforeach ?>
+    </ul>
+
+</body>
+</html>
+```
