@@ -77,7 +77,8 @@ Folder di proyek Anda setelah pengaturan : aplikasi, publik, tes, dapat ditulis,
 
 #### Server Pengembangan Lokal
 dengan baris perintah berikut di cmd kita dapat meluncurkan server lokal kita dan sekarang  dapat melihat aplikasi kita di browser default di http://localhost:8080 .
-````shell
+
+```shell
 php spark serve
 ```
 
